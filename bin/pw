@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'pushwagner'
+puts Pushwagner::Main.new('config_file' => 'test.yml')

@@ -1,0 +1,26 @@
+maven:
+  repositories:
+    releases:  http://admin.uppercase.no/nexus/content/repositories/releases
+    snapshots: http://admin.uppercase.no/nexus/content/repositories/snapshots
+  artifacts:
+    hubble-api:
+      group_id:    hubble
+      artifact_id: hubble-api
+    hubble-notifier:
+      group_id:    hubble
+      artifact_id: hubble-notifier
+
+static:
+  diakonhjemmet.uppercase.no:
+    - index.htm
+    - static
+
+environments:
+  staging:
+    hosts:           [staging.uppercase.no]
+    user:            www-data
+    healthcheck_url: http://staging.hubbleapp.no/health
+  production:
+    hosts:           [prod1.uppercase.no]
+    user:            www-data
+    healthcheck_url: http://www.hubbleapp.no/health
