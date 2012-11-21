@@ -1,4 +1,24 @@
 #!/usr/bin/env ruby
 
 require 'pushwagner'
-puts Pushwagner::Main.new('config_file' => 'test.yml')
+
+def get_version
+  puts "You must specify which version you wish to deploy: "
+  STDIN.gets.strip
+end
+
+version = ENV["VERSION"] || get_version
+
+main = Pushwagner::Main.new(:config_file => 'config/deploy.yml', :version => version, :environment => 'staging')
+
+case ARGV[0]
+  when "deploy"
+
+    main.deploy
+    main.restart
+
+  when "restart"
+    main.restart
+  else
+    puts "Usage: pw <deploy|restart>"
+end

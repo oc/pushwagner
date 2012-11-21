@@ -2,7 +2,7 @@ module Pushwagner
 
   class Main
     def initialize(opts = {})
-      @environment = Environment.new(opts)
+      @environment = Pushwagner::Environment.new(opts)
     end
 
     def set_environment(env)

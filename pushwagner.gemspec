@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.date          = Time.now.strftime("%Y-%m-%d")
 
   s.description   = "Simple remote automation wrapper."
-  s.summary       = s.description
+  s.summary       = "Simple remote automation wrapper (wip)."
 
   s.authors       = ["Ole Christian Rynning"]
   s.email         = 'oc@rynning.no'
