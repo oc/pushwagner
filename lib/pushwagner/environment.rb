@@ -18,11 +18,11 @@ module Pushwagner
     end
 
     def path_prefix
-      config[:path_prefix] || '/srv/www'
+      config['path_prefix'] || '/srv/www'
     end
 
     def maven
-      @maven = config[:maven] ? Maven.new(config[:maven], version) : {}
+      @maven = config['maven'] ? Maven.new(config['maven'], version) : {}
     end
 
     def maven?
@@ -30,7 +30,7 @@ module Pushwagner
     end
 
     def static
-      config[:static] || {}
+      config['static'] || {}
     end
 
     def static?
@@ -38,7 +38,7 @@ module Pushwagner
     end
 
     def environments
-      config[:environments] || {}
+      config['environments'] || {}
     end
 
     def environment
@@ -46,11 +46,11 @@ module Pushwagner
     end
 
     def hosts
-      environment[:hosts] || []
+      environment['hosts'] || []
     end
 
     def user
-      environment[:user] || "nobody"
+      environment['user'] || "nobody"
     end
   end
 end

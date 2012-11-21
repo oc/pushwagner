@@ -7,7 +7,7 @@ module Pushwagner
       end
 
       def restart
-        puts "TODO: Restart"
+        puts "..."
       end
     end
   end

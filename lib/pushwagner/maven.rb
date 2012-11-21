@@ -97,8 +97,9 @@ module Pushwagner
 
     def initialize(env, opts = {})
       @environment = env
-      @artifacts = env.maven.artifacts
-      @repository = env.maven.repository
+      # TODO: nil-object instead?
+      @artifacts = env.maven? ? env.maven.artifacts : {}
+      @repository = env.maven? ? env.maven.repository : nil
     end
 
     def deploy

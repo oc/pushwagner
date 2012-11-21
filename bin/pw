@@ -7,18 +7,20 @@ def get_version
   STDIN.gets.strip
 end
 
-version = ENV["VERSION"] || get_version
+# TODO: detect version requirement from config
+version = 1 # ENV["VERSION"] || get_version
 
 main = Pushwagner::Main.new(:config_file => 'config/deploy.yml', :version => version, :environment => 'staging')
 
+# TODO: detect cli from config
 case ARGV[0]
   when "deploy"
-
     main.deploy
     main.restart
 
   when "restart"
     main.restart
+
   else
     puts "Usage: pw <deploy|restart>"
 end
