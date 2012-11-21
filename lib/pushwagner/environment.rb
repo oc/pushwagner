@@ -22,7 +22,7 @@ module Pushwagner
     end
 
     def maven
-      @maven = config['maven'] ? Maven.new(config['maven'], version) : {}
+      @maven = (config['maven'] ? Maven.new(config['maven'], version) : {})
     end
 
     def maven?

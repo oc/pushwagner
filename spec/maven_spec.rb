@@ -9,6 +9,14 @@ describe Pushwagner::Maven do
       expect { Pushwagner::Maven.new(cfg, nil) }.to raise_error(StandardError, "Deployment version for artifacts is required")
     end
 
+    it "requires valid configuration" do
+      expect{Pushwagner::Maven.new(nil, "1baz")}.to raise_error(StandardError, "Need maven configuration")
+    end
+
+    it "requires valid repositories configuration" do
+      expect{Pushwagner::Maven.new({}, "1baz")}.to raise_error(StandardError, "repositories configuration required")
+    end
+
     it "trickles the version down to artifacts" do
       m = Pushwagner::Maven.new(cfg, "1foo")
       expect(m.artifacts["some-api"].version).to eq("1foo")
@@ -19,17 +27,10 @@ describe Pushwagner::Maven do
       expect(m.artifacts["some-notifier"].version).to eq("1.0final")
     end
 
-    it "returns nil-object maven when not configured" do
-      m = Pushwagner::Maven.new({}, "1baz")
-      expect(m.artifacts).to be_nil
-      expect(m).to_not be_nil
-    end
-
     describe "initialization of artifacts" do
-      it "handles no artifacts" do
+      it "requires at least one artifact" do
         cfg.delete('artifacts')
-        m = Pushwagner::Maven.new(cfg, "1bar")
-        expect(m.artifacts.size).to eq(0)
+        expect {Pushwagner::Maven.new(cfg, "1bar")}.to raise_error(StandardError, "Requires at least one maven artifact")
       end
       it "parses two artifacts" do
         m = Pushwagner::Maven.new(cfg, "1bar")

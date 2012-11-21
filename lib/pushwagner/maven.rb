@@ -9,15 +9,21 @@ module Pushwagner
 
     attr_reader :repository, :artifacts
     def initialize(maven, version)
-      return if !maven or maven.empty?
+      required("Need maven configuration") unless maven
 
       @version = version || required("Deployment version for artifacts is required")
       @repository = Repository.new(maven['repositories'])
-      @artifacts = Hash[(maven['artifacts'] || {}).map { |k,h| [k, Artifact.new(h['artifact_id'], h['group_id'], h['version'] || version)] }]
+      @artifacts = Hash[(maven['artifacts'] || required("Requires at least one maven artifact")).map { |k,h| [k, Artifact.new(h['artifact_id'], h['group_id'], h['version'] || version)] }]
+
+      (artifacts && repository) || required("Could not initialize maven configuration")
     end
 
     def required(msg)
       raise StandardError.new(msg)
+    end
+
+    def any?
+      artifacts && repository
     end
   end
 
@@ -63,7 +69,7 @@ module Pushwagner
 
     def absolute_url(artifact)
       if artifact.snapshot?
-        doc = Nokogiri::XML(open(URI.parse("#{snapshots_url}/#{artifact.base_path}/maven-metadata.xml"), :http_basic_authentication => authentication(false)))
+        doc = Nokogiri::XML(open(URI.parse("#{snapshots_url}/#{artifact.base_path}/maven-metadata.xml"), :http_basic_authentication => authentication(true).split(":")))
         snapshot_version = doc.xpath("//metadata/versioning/snapshotVersions/snapshotVersion/value/text()").first.content
         return "#{snapshots_url}/#{artifact.base_path}/#{artifact.artifact_id}-#{snapshot_version}.jar"
       end
@@ -118,22 +124,21 @@ module Pushwagner
     def pull_artifact(name, artifact, host)
       Net::SSH.start(host, environment.user) do |ssh|
         puts "Pulling #{repository.absolute_url(artifact)} to #{host}:#{environment.path_prefix}/#{artifact.jar_name}..."
-        ssh.exec("curl --user '#{repository.authentication(artifact.snapshot?)}' #{repository.absolute_url(artifact)} > #{environment.path_prefix}/#{artifact.jar_name}")
+        ssh.exec("curl --user '#{repository.authentication(artifact.snapshot?)}' #{repository.absolute_url(artifact)} > #{environment.path_prefix}/#{name}/#{artifact.jar_name}")
       end
     end
 
     def mark_previous(name, host)
-      Net::SSH.start(host, user) do |ssh|
+      Net::SSH.start(host, environment.user) do |ssh|
         puts "Marking previous release on #{host}..."
-        ssh.exec("cp -P #{environment.path_prefix}/#{name}.jar #{environment.path_prefix}/#{name}.previous.jar")
+        ssh.exec("cp -P #{environment.path_prefix}/#{name}/#{name}.jar #{environment.path_prefix}/#{name}/#{name}.previous.jar")
       end
     end
 
     def mark_new(name, artifact, host)
-      Net::SSH.start(host, user) do |ssh|
-        cwd = deploy_path(app_name)
+      Net::SSH.start(host, environment.user) do |ssh|
         puts "Marking #{artifact.jar_name} as current on #{host}..."
-        ssh.exec("ln -sf #{environment.path_prefix}/#{artifact.jar_name} #{environment.path_prefix}/#{name}.jar")
+        ssh.exec("ln -sf #{environment.path_prefix}/#{name}/#{artifact.jar_name} #{environment.path_prefix}/#{name}/#{name}.jar")
       end
     end
 

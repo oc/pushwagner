@@ -14,8 +14,8 @@ module Pushwagner
     end
 
     def deploy(opts = {})
-      Maven::Deployer.new(@environment, opts).deploy
-      Static::Deployer.new(@environment, opts).deploy
+      Maven::Deployer.new(@environment, opts).deploy if @environment.maven?
+      Static::Deployer.new(@environment, opts).deploy if @environment.static?
     end
 
     def restart(opts = {})
