@@ -1,27 +1,28 @@
+require 'pushwagner/ext'
+require 'pushwagner/maven'
+
 module Pushwagner
 
   class Environment
     attr_reader :config
-    attr_writer :current
-    attr_writer :version
+    attr_accessor :current, :version
 
     def initialize(opts = {})
-      config_file = opts['config_file'] || File.join(File.dirname(__FILE__), '/config/deploy.yml')
+      opts = HashWithIndifferentAccess.new(opts)
 
-      @current = opts['environment'] || 'development'
-      @config = YAML::load_file(config_file)
+      config_file = opts[:config_file] || File.join(File.dirname(__FILE__), '/config/deploy.yml')
+      @version = opts[:version]
+      @current = opts[:environment] || 'development'
+
+      @config = HashWithIndifferentAccess.new(YAML::load_file(config_file) || {})
     end
 
     def path_prefix
-      config['path_prefix'] || '/srv/www'
-    end
-
-    def environments
-      config['environments']
+      config[:path_prefix] || '/srv/www'
     end
 
     def maven
-      @maven = Maven.new(config['maven'], version)
+      @maven = config[:maven] ? Maven.new(config[:maven], version) : {}
     end
 
     def maven?
@@ -29,23 +30,27 @@ module Pushwagner
     end
 
     def static
-      config['static'] || {}
+      config[:static] || {}
     end
 
     def static?
       static.any?
     end
 
+    def environments
+      config[:environments] || {}
+    end
+
     def environment
-      environments[current]
+      environments[current] || {}
     end
 
     def hosts
-      environment['hosts']
+      environment[:hosts] || []
     end
 
     def user
-      environment['user']
+      environment[:user] || "nobody"
     end
   end
 end

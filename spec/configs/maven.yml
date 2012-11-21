@@ -1,0 +1,19 @@
+path_prefix: /var/www
+
+maven:
+  repositories:
+    releases:  http://w00t.uppercase.no/nexus/content/repositories/releases
+    snapshots: http://w00t.uppercase.no/nexus/content/repositories/snapshots
+  artifacts:
+    some-api:
+      group_id:    uppercase
+      artifact_id: uc-api
+    some-notifier:
+      group_id:    uppercase
+      artifact_id: uc-notifier
+      version: 1.0final
+
+environments:
+  simple:
+    hosts: [simple.uppercase.no]
+    user:  www-data

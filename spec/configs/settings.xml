@@ -1,0 +1,14 @@
+<settings>
+  <servers>
+    <server>
+      <id>releases</id>
+      <username>foo</username>
+      <password>bar</password>
+    </server>
+    <server>
+      <id>snapshots</id>
+      <username>bar</username>
+      <password>baz</password>
+    </server>
+  </servers>
+</settings>

@@ -1,0 +1,24 @@
+<metadata modelVersion="1.1.0">
+  <groupId>bar</groupId>
+  <artifactId>foo</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <timestamp>20121114.152717</timestamp>
+      <buildNumber>3</buildNumber>
+    </snapshot>
+    <lastUpdated>20121114152717</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>1.0-20121114.152717-3</value>
+        <updated>20121114152717</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>1.0-20121114.152717-3</value>
+        <updated>20121114152717</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>

@@ -8,35 +8,22 @@ module Pushwagner
   class Maven
 
     attr_reader :repository, :artifacts
-
-    # maven:
-    #  repositories:
-    #    releases:  http://admin.uppercase.no/nexus/content/repositories/releases
-    #    snapshots: http://admin.uppercase.no/nexus/content/repositories/snapshots
-    #  artifacts:
-    #    hubble-api:
-    #      group_id:    hubble
-    #      artifact_id: hubble-api
-    #    hubble-notifier:
-    #      group_id:    hubble
-    #      artifact_id: hubble-notifier
-    #    hubble-notifier1:
-    #      group_id:    hubble
-    #      artifact_id: hubble-notifier
-    #      version:     1.0
     def initialize(maven, version)
+      return if !maven or maven.empty?
+
       @version = version || required("Deployment version for artifacts is required")
       @repository = Repository.new(maven['repositories'])
-      @artifacts = Hash[maven['artifacts'].map { |k,h| [k, Artifact.new(h['artifact_id'], h['group_id'], h['version'] || version)] }]
+      @artifacts = Hash[(maven['artifacts'] || {}).map { |k,h| [k, Artifact.new(h['artifact_id'], h['group_id'], h['version'] || version)] }]
     end
 
-    def self.required(msg)
+    def required(msg)
       raise StandardError.new(msg)
     end
   end
 
   class Maven::Artifact
     attr_reader :artifact_id, :group_id, :version
+
     def initialize(artifact_id, group_id, version)
       @artifact_id = artifact_id
       @group_id = group_id
@@ -61,15 +48,15 @@ module Pushwagner
 
   end
 
-  # TODO: model this better - should probably support other repo id's.
-  # TODO2: validate file exists (HEAD)
-  # TODO3: clean up
-  # TODO4: Use REXML instead of nokogiri?
   class Maven::Repository
     attr_reader :snapshots_url
     attr_reader :releases_url
 
     def initialize(repositories)
+      required(repositories, "repositories configuration required")
+      required(repositories['snapshots'], "snapshots repository required")
+      required(repositories['releases'], "releases repository required")
+
       @snapshots_url = repositories['snapshots']
       @releases_url = repositories['releases']
     end
@@ -88,12 +75,17 @@ module Pushwagner
       @settings_file ||= ENV['M2_HOME'] ? "#{ENV['M2_HOME']}/conf/settings.xml" : "#{ENV['HOME']}/.m2/settings.xml"
 
       if File.exists?(@settings_file)
-        Nokogiri::XML(open(settings_file)).css("settings servers server").each do |n|
-          return "#{n.css("username").text}:#{n.css("password").text}" if n.css("id").text == snapshots ? 'snapshots' : 'releases'
+        Nokogiri::XML(open(@settings_file)).css("settings servers server").each do |n|
+          return "#{n.css("username").text}:#{n.css("password").text}" if n.css("id").text == (snapshots ? 'snapshots' : 'releases')
         end
       end
       ""
     end
+
+    def required(exp, message)
+      raise StandardError.new(message) unless exp
+    end
+
   end
 
   #
@@ -112,7 +104,7 @@ module Pushwagner
     def deploy
       artifacts.each do |name, artifact|
         environment.hosts.each do |host|
-          mark_previous(name, artifact, host)
+          mark_previous(name, host)
           pull_artifact(name, artifact, host)
           mark_new(name, artifact, host)
         end

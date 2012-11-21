@@ -1,0 +1,11 @@
+path_prefix: /static/path
+
+static:
+  diakonhjemmet.uppercase.no:
+    - index.htm
+    - static
+
+environments:
+  www:
+    hosts: [www.uppercase.no, www2.uppercase.no]
+    user:  www-data

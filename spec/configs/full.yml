@@ -1,0 +1,26 @@
+path_prefix: /full/path
+
+maven:
+  repositories:
+    releases:  http://foo.mu/nexus/content/repositories/releases
+    snapshots: http://foo.mu/nexus/content/repositories/snapshots
+  artifacts:
+    bubble-api:
+      group_id:    double
+      artifact_id: trouble-api
+    bubble-notifier:
+      group_id:    double
+      artifact_id: trouble-notifier
+
+static:
+  diakonhjemmet.uppercase.no:
+    - index.htm
+    - static
+
+environments:
+  staging:
+    hosts:           [staging.uppercase.no]
+    user:            www-data
+  production:
+    hosts:           [prod1.uppercase.no]
+    user:            www-data
