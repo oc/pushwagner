@@ -10,7 +10,7 @@ module Pushwagner
     end
 
     def set_version(version)
-      @environment.version = version
+      @environment.version = version.to_s
     end
 
     def deploy(opts = {})

@@ -11,7 +11,7 @@ module Pushwagner
     def initialize(maven, version)
       required("Need maven configuration") unless maven
 
-      @version = version || required("Deployment version for artifacts is required")
+      @version = version.to_s || required("Deployment version for artifacts is required")
       @repository = Repository.new(maven['repositories'])
       @artifacts = Hash[(maven['artifacts'] || required("Requires at least one maven artifact")).map { |k,h| [k, Artifact.new(h['artifact_id'], h['group_id'], h['version'] || version)] }]
 
