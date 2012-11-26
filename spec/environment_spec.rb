@@ -42,7 +42,7 @@ describe Pushwagner::Environment do
     end
     it "is a hash with files" do
       env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'static.yml'))
-      expect(env.static).to eq({'diakonhjemmet.uppercase.no' => ['index.htm', 'static']})
+      expect(env.static).to eq({'blah.uppercase.no' => ['index.htm', 'static']})
     end
   end
   describe "#environments" do

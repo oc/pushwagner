@@ -13,7 +13,7 @@ maven:
       artifact_id: trouble-notifier
 
 static:
-  diakonhjemmet.uppercase.no:
+  blah.uppercase.no:
     - index.htm
     - static
 
