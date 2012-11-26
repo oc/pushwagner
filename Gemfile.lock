@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pushwagner (0.0.1)
+    pushwagner (0.0.1.1)
       net-scp
       net-ssh
       nokogiri (~> 1.5)

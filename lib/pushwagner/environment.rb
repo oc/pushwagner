@@ -11,7 +11,7 @@ module Pushwagner
       opts = HashWithIndifferentAccess.new(opts)
 
       config_file = opts[:config_file] || File.join(File.dirname(__FILE__), '/config/deploy.yml')
-      @version = opts[:version].to_s
+      @version = opts[:version] && opts[:version].to_s
       @current = opts[:environment] || 'development'
 
       @config = HashWithIndifferentAccess.new(YAML::load_file(config_file) || {})
