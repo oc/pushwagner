@@ -1,6 +1,7 @@
 Static-file provision:
 
 [ ] Support hooks, i.e.:
+
     hooks:
       before:
         - cmd: mvn package
