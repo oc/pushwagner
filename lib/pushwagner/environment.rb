@@ -1,5 +1,6 @@
 require 'pushwagner/ext'
 require 'pushwagner/maven'
+require 'yaml'
 
 module Pushwagner
 

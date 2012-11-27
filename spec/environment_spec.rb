@@ -22,7 +22,7 @@ describe Pushwagner::Environment do
       expect(env.version).to eq("1.3.3.7")
     end
   end
-  describe "#maven" do
+  describe "maven artifacts" do
     it "requires a version" do
       env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'maven.yml'))
       expect { env.maven }.to raise_error(StandardError, "Deployment version for artifacts is required")
@@ -34,41 +34,41 @@ describe Pushwagner::Environment do
       expect(env.maven).to eq({})
     end
   end
-  describe "#static" do
+  describe "static files" do
     it "returns empty hash when not configured" do
       env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'maven.yml'), :version => "1foo" )
       expect(env.static?).to be_false
       expect(env.static).to eq({})
     end
-    it "is a hash with files" do
+    it "parses to a hash of files" do
       env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'static.yml'))
       expect(env.static).to eq({'blah.uppercase.no' => ['index.htm', 'static']})
     end
   end
-  describe "#environments" do
+  describe "environments" do
     it "returns all environments" do
       env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'full.yml'), :version => "1foo" )
       expect(env.environments.size).to eq(2)
     end
-  end
-  describe "#environment" do
-    it "returns empty environment if it doesn't exist" do
-      env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'full.yml'), :version => "1foo" )
-      expect(env.environment).to eq({})
-    end
-    it "returns environment if it exists" do
-      env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'full.yml'), :version => "1foo", :environment => "staging")
-      expect(env.environment).to eq({'hosts' => ["staging.uppercase.no"], 'user' => "www-data"})
-    end
-  end
-  describe "#hosts" do
-    it "returns empty list if it doesn't exist" do
-      env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'empty.yml'), :version => "1foo" )
-      expect(env.hosts).to eq([])
-    end
-    it "returns environment if it exists" do
-      env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'full.yml'), :version => "1foo", :environment => "staging")
-      expect(env.environment).to eq({'hosts' => ["staging.uppercase.no"], 'user' => "www-data"})
+    describe "environment" do
+      it "returns empty environment if it doesn't exist" do
+        env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'full.yml'), :version => "1foo" )
+        expect(env.environment).to eq({})
+      end
+      it "returns environment if it exists" do
+        env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'full.yml'), :version => "1foo", :environment => "staging")
+        expect(env.environment).to eq({'hosts' => ["staging.uppercase.no"], 'user' => "www-data"})
+      end
+      describe "hosts" do
+        it "returns empty list if it doesn't exist" do
+          env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'empty.yml'), :version => "1foo" )
+          expect(env.hosts).to eq([])
+        end
+        it "returns environment if it exists" do
+          env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'full.yml'), :version => "1foo", :environment => "staging")
+          expect(env.environment).to eq({'hosts' => ["staging.uppercase.no"], 'user' => "www-data"})
+        end
+      end
     end
   end
 end

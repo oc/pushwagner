@@ -27,7 +27,7 @@ describe Pushwagner::Maven do
       expect(m.artifacts["some-notifier"].version).to eq("1.0final")
     end
 
-    describe "initialization of artifacts" do
+    describe "artifacts" do
       it "requires at least one artifact" do
         cfg.delete('artifacts')
         expect {Pushwagner::Maven.new(cfg, "1bar")}.to raise_error(StandardError, "Requires at least one maven artifact")
@@ -35,25 +35,25 @@ describe Pushwagner::Maven do
       it "parses two artifacts" do
         m = Pushwagner::Maven.new(cfg, "1bar")
         expect(m.artifacts.size).to eq(2)
-        expect(m.artifacts.keys.first).to eq("some-api")
-        expect(m.artifacts.keys.last).to eq("some-notifier")
+        expect(m.artifacts.keys).to include("some-api")
+        expect(m.artifacts.keys).to include("some-notifier")
       end
     end
 
-    describe "initialization of repositories" do
-      it "requires snapshots repository" do
+    describe "repositories" do
+      it "requires repositories configuration element" do
         cfg.delete('repositories')
         expect {Pushwagner::Maven.new(cfg, "1")}.to raise_error(StandardError)
       end
-      it "requires snapshots repository" do
+      it "requires 'snapshots' repository" do
         cfg['repositories'].delete('snapshots')
         expect {Pushwagner::Maven.new(cfg, "1")}.to raise_error(StandardError)
       end
-      it "requires releases repository" do
+      it "requires 'releases' repository" do
         cfg['repositories'].delete('releases')
         expect {Pushwagner::Maven.new(cfg, "1")}.to raise_error(StandardError)
       end
-      it "parses repository" do
+      it "parses repositories" do
         m = Pushwagner::Maven.new(cfg, "1")
         expect(m.repository.snapshots_url).to eq("http://w00t.uppercase.no/nexus/content/repositories/snapshots")
         expect(m.repository.releases_url).to eq("http://w00t.uppercase.no/nexus/content/repositories/releases")
@@ -61,7 +61,7 @@ describe Pushwagner::Maven do
     end
   end
 
-  describe "repositories" do
+  describe "repository authentication" do
     let(:settings) {IO.read(File.join(config_root, 'settings.xml'))}
 
     it "reads releases authentication from maven settings.xml" do
@@ -81,7 +81,8 @@ describe Pushwagner::Maven do
 
       expect(m.repository.authentication(true)).to eq("bar:baz")
     end
-
+  end
+  describe "maven2-style repo support" do
     let(:metadata) {IO.read(File.join(config_root, 'maven-metadata.xml'))}
 
     it "builds maven2-repo-style urls and retrieves metadata" do
