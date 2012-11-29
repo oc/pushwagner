@@ -11,7 +11,8 @@ module Pushwagner
     def initialize(opts = {})
       opts = HashWithIndifferentAccess.new(opts)
 
-      config_file = opts[:config_file] || File.join(File.dirname(__FILE__), '/config/deploy.yml')
+      config_file = look_for_config_file(opts[:config_file])
+
       @version = opts[:version] && opts[:version].to_s
       @current = opts[:environment] || 'development'
 
@@ -52,6 +53,18 @@ module Pushwagner
 
     def user
       environment['user'] || "nobody"
+    end
+
+    private
+    def look_for_config_file(file)
+      locations = [file, './deploy.yml', './.pw.yml', './config/deploy.yml']
+
+      locations.each do |location|
+        return location if File.exist? location
+        cf = File.join(File.dirname(__FILE__), location) # i.e rake/thor.
+        return cf if File.exist? cf
+      end
+      raise "Couldn't find config file in locations: #{locations.join(', ')}"
     end
   end
 end
