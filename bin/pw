@@ -10,7 +10,7 @@ end
 # TODO: detect version requirement from config
 version = 1 # ENV["VERSION"] || get_version
 
-main = Pushwagner::Main.new(:config_file => 'config/deploy.yml', :version => version, :environment => 'staging')
+main = Pushwagner::Main.new(:config_file => 'config/deploy.yml', :version => version, :environment => ENV['PW_ENV'] || 'staging')
 
 # TODO: detect cli from config
 case ARGV[0]
