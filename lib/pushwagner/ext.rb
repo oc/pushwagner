@@ -1,4 +1,8 @@
+# Use colorize gem to color/fmt output
+require 'colorize'
+
 module Pushwagner
+  # Shamefully copied from ActiveSupport
   class HashWithIndifferentAccess < ::Hash
     def initialize(hash={})
       super()

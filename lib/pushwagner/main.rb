@@ -14,6 +14,9 @@ module Pushwagner
     end
 
     def deploy(opts = {})
+      puts "Deploying to #{@environment.current} environment:"
+      @environment.hosts.each { |h| puts "  - #{@environment.user}@#{h}"}
+
       Maven::Deployer.new(@environment, opts).deploy if @environment.maven?
       Static::Deployer.new(@environment, opts).deploy if @environment.static?
     end

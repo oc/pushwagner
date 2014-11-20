@@ -119,6 +119,7 @@ module Pushwagner
           mark_previous(name, host)
           pull_artifact(name, artifact, host)
           mark_new(name, artifact, host)
+          puts "Deployed to #{name}, #{artifact} to #{host}: [ " + "OK".colorize(:green) + " ]"
         end
       end
       true # false if failed
