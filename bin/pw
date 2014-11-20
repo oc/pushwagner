@@ -10,7 +10,7 @@ end
 # TODO: detect version requirement from config
 version = 1 # ENV["VERSION"] || get_version
 
-env = ARGV[1] || ENV['PW_ENV'] || 'production'
+env = ARGV[1] || ENV['PW_ENV'] || 'default'
 
 main = Pushwagner::Main.new(:config_file => 'config/deploy.yml', :version => version, :environment => env)
 
