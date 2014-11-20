@@ -23,10 +23,10 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'net-ssh'
   s.add_runtime_dependency 'net-scp'
-  s.add_runtime_dependency 'nokogiri', '~> 1.5.0'
+  s.add_runtime_dependency 'nokogiri', '~> 1.6.4.1'
 
-  s.add_development_dependency 'bundler', '~> 1.0'
-  s.add_development_dependency 'rake', '~> 0.9'
+  s.add_development_dependency 'bundler', '~> 1.7.6'
+  s.add_development_dependency 'rake', '~> 10.1.0'
   s.add_development_dependency 'rspec', '~> 2.11'
 
 end
