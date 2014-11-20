@@ -20,7 +20,7 @@ module Pushwagner
     end
 
     def path_prefix
-      config['path_prefix'] || '/srv/www'
+      config['path_prefix'] || '/'
     end
 
     def maven
