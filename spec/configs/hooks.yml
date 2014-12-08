@@ -1,0 +1,18 @@
+path_prefix: /static/path
+
+hooks:
+  remote: 
+    before:
+      - ls
+      - echo "foo"
+  local:
+    before:
+      - echo "one"
+    after:
+      - echo "two"
+      - echo "three"
+
+environments:
+  default:
+    hosts: [www.uppercase.no, www2.uppercase.no]
+    user:  www-data

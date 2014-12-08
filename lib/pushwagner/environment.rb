@@ -14,7 +14,7 @@ module Pushwagner
       config_file = look_for_config_file(opts[:config_file])
 
       @version = opts[:version] && opts[:version].to_s
-      @current = opts[:environment] || 'development'
+      @current = opts[:environment] || 'default'
 
       @config = HashWithIndifferentAccess.new(YAML::load_file(config_file) || {})
     end
@@ -41,6 +41,10 @@ module Pushwagner
 
     def environments
       config['environments'] || {}
+    end
+
+    def hooks
+      config['hooks'] || {}
     end
 
     def environment
