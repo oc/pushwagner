@@ -11,8 +11,7 @@ module Pushwagner
   end
 
   def self.begin_info(str)
-    s = str.trunc(99)
-    print s.colorize(mode: :bold).ljust(101, ".")
+    print str.trunc(99).ljust(101, ".").colorize(mode: :bold)
   end
 
   def self.info(str)
