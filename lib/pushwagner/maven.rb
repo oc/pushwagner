@@ -120,10 +120,12 @@ module Pushwagner
     def deploy
       artifacts.each do |name, artifact|
         environment.hosts.each do |host|
+          Pushwagner.info "Deploying #{name}, #{artifact} to #{host}"
+
           mark_previous(name, host)
           pull_artifact(name, artifact, host)
           mark_new(name, artifact, host)
-          puts "Deployed #{name}, #{artifact} to #{host}: [ " + "OK".colorize(:green) + " ]"
+
         end
       end
       true # false if failed
@@ -133,22 +135,25 @@ module Pushwagner
 
     def pull_artifact(name, artifact, host)
       Net::SSH.start(host, environment.user) do |ssh|
-        puts "Pulling #{repository.absolute_url(artifact)} to #{host}:#{environment.path_prefix}/#{artifact.jar_name}..."
+        Pushwagner.begin_info "Pulling #{repository.absolute_url(artifact)} to #{host}:#{environment.path_prefix}/#{artifact.jar_name}"
         ssh.exec("curl --user '#{repository.authentication(artifact.snapshot?)}' #{repository.absolute_url(artifact)} > #{environment.path_prefix}/#{name}/#{artifact.jar_name}")
+        Pushwagner.ok
       end
     end
 
     def mark_previous(name, host)
       Net::SSH.start(host, environment.user) do |ssh|
-        puts "Marking previous release on #{host}..."
+        Pushwagner.begin_info "Marking previous release on #{host}"
         ssh.exec("cp -P #{environment.path_prefix}/#{name}/#{name}.jar #{environment.path_prefix}/#{name}/#{name}.previous.jar")
+        Pushwagner.ok
       end
     end
 
     def mark_new(name, artifact, host)
       Net::SSH.start(host, environment.user) do |ssh|
-        puts "Marking #{artifact.jar_name} as current on #{host}..."
+        Pushwagner.begin_info "Marking #{artifact.jar_name} as current on #{host}"
         ssh.exec("ln -sf #{environment.path_prefix}/#{name}/#{artifact.jar_name} #{environment.path_prefix}/#{name}/#{name}.jar")
+        Pushwagner.ok
       end
     end
 

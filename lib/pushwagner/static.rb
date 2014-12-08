@@ -15,14 +15,17 @@ module Pushwagner
           environment.hosts.each do |host|
             Net::SCP.start(host, environment.user) do |scp|
               dest = name.start_with?('/') ? name : "#{environment.path_prefix}/#{name}/"
-              puts "Uploading files to #{host}:#{dest}/"
+              Pushwagner.info "Uploading files to #{host}:#{dest}"
+
               files.each do |f|
                 if File.exists?(f)
                   scp.upload!(f, dest, :recursive => File.directory?(f))
                 else
-                  puts "Warning: File #{f} does not exist"
+                  Pushwagner.warning "Local file #{f} does not exist"
                 end
               end
+
+              Pushwagner.ok
             end
           end
         end

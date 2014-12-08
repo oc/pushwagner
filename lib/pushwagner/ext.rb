@@ -1,16 +1,6 @@
-# Use colorize gem to color/fmt output
-require 'colorize'
-
 class String
   def trunc(sz)
-    str = self.strip
-    if str.length == sz
-      str
-    elsif self.length > (sz - 2)
-      "#{str[0, sz - 2]}.."
-    else
-      str
-    end
+    self[0, sz]
   end
 end
 

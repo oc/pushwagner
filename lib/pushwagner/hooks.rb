@@ -47,23 +47,61 @@ module Pushwagner
       ssh_exec(method(target).call)
     end
 
+    def gets_sudo_passwd
+      if @sudo.nil?
+        puts
+        Pushwagner.severe  "<<< WARNING: this operation requires privileges >>>"
+        Pushwagner.warning "Enter Ctrl+C to abort."
+        print "Enter sudo-passwd: "
+
+        begin
+          system 'stty -echo'
+        rescue
+          # windoz
+        end
+        @sudo = STDIN.gets.chomp
+        begin
+          system 'stty echo'
+        rescue
+          # windoz
+        end
+      end
+      @sudo
+    end
 
     def ssh_exec(cmds)
       environment.hosts.each do |host|
         cmds.each do |cmd|
           # Run each cmd in a separate 'transaction'
+          Pushwagner.begin_info "Executing `#{cmd}` on #{host}"
+
           Net::SSH.start(host, environment.user) do |ssh|
-            print "Executing on #{host.trunc(25)}:".ljust(40)
-            print "`#{cmd.trunc(25)}`".ljust(30)
-            ssh.exec("#{cmd}")
-            puts '[ OK ]'
+            ssh.open_channel do |ch|
+
+              ch.request_pty do |pty_ch, success|
+                raise "could not execute #{cmd}" unless success
+
+                ch.exec("#{cmd}")
+
+                ch.on_data do |data_ch, data|
+                  if data =~ /\[sudo\] password/i
+                    ch.send_data("#{gets_sudo_passwd}\n")
+                  end
+                end
+              end
+            end
+
+            ssh.loop
           end
+
+          Pushwagner.ok
         end
       end
     end
 
   end
-  
+
+
   class Hooks::Local
     
     attr_reader :environment, :before, :after
@@ -81,10 +119,9 @@ module Pushwagner
     private
     def local_exec(cmds)
       cmds.each do |cmd|
-        print "Executing locally:".ljust(40)
-        print "`#{cmd.trunc(25)}`".ljust(30)
+        Pushwagner.begin_info "Executing locally `#{cmd}` locally"
         system("#{cmd}")
-        puts '[ OK ]'
+        Pushwagner.ok
       end
     end
 

@@ -74,8 +74,9 @@ describe Pushwagner::Hooks::Local do
     it "supports :before hooks" do
       sut = Pushwagner::Hooks::Local.new(env, env.hooks['local'])
 
-      sut.stub(:print)
-      sut.stub(:puts)
+      Pushwagner.stub(:info)
+      Pushwagner.stub(:begin_info)
+      Pushwagner.stub(:ok)
 
       sut.should_receive(:system).with('echo "one"').once
       sut.run(:before)
@@ -83,8 +84,9 @@ describe Pushwagner::Hooks::Local do
     it "supports :after hooks" do
       sut = Pushwagner::Hooks::Local.new(env, env.hooks['local'])
 
-      sut.stub(:print)
-      sut.stub(:puts)
+      Pushwagner.stub(:info)
+      Pushwagner.stub(:begin_info)
+      Pushwagner.stub(:ok)
 
       sut.should_receive(:system).with('echo "two"').once
       sut.should_receive(:system).with('echo "three"').once
@@ -115,14 +117,14 @@ describe Pushwagner::Hooks::Remote do
     it "supports :before hooks" do
       sut = Pushwagner::Hooks::Remote.new(env, env.hooks['remote'])
 
-      sut.stub(:print)
-      sut.stub(:puts)
+      Pushwagner.stub(:info)
+      Pushwagner.stub(:begin_info)
+      Pushwagner.stub(:ok)
 
-
-      # Mock Net::SSH inner interaction
+      # Mock Net::SSH inner interaction smoke test
       ssh = mock
-      ssh.should_receive(:exec).with('ls').twice
-      ssh.should_receive(:exec).with('echo "foo"').twice
+      ssh.should_receive(:open_channel).exactly(4).times
+      ssh.should_receive(:loop).exactly(4).times
       Net::SSH.should_receive(:start).and_yield(ssh).exactly(4).times
 
       sut.run(:before)
@@ -131,9 +133,9 @@ describe Pushwagner::Hooks::Remote do
     it "supports :after hooks" do
       sut = Pushwagner::Hooks::Remote.new(env, env.hooks['remote'])
 
-      # Mock Net::SSH inner interaction
+      # Mock Net::SSH inner interaction smoke
       ssh = mock
-      ssh.should_receive(:exec).with(anything()).never
+      ssh.should_receive(:open_channel).never
       Net::SSH.should_receive(:start).and_yield(ssh).never
 
       sut.run(:after)

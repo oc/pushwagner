@@ -14,19 +14,18 @@ module Pushwagner
     end
 
     def deploy(opts = {})
-      puts "Deploying to #{@environment.current} environment:"
-      @environment.hosts.each { |h| puts "  - #{@environment.user}@#{h}"}
+      Pushwagner.info "Starting deployment to environment: #{@environment.current}"
+      @environment.hosts.each { |h| Pushwagner.info "  - #{@environment.user}@#{h}" }
       
-      Hooks::Runner.new(@environment, opts).before
+      pw_hooks = Hooks.new(@environment)
+      pw_hooks.run(:before)
 
       Maven::Deployer.new(@environment, opts).deploy if @environment.maven?
       Static::Deployer.new(@environment, opts).deploy if @environment.static?
-      
-      Hooks::Runner.new(@environment, opts).after
+
+      pw_hooks.run(:after)
     end
 
-    def restart(opts = {})
-      Supervisord::Restarter.new(@environment, opts).restart
-    end
   end
+
 end
