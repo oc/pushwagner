@@ -119,8 +119,12 @@ module Pushwagner
     private
     def local_exec(cmds)
       cmds.each do |cmd|
-        Pushwagner.begin_info "Executing locally `#{cmd}` locally"
+        Pushwagner.begin_info "Executing `#{cmd}` locally"
+
+        begin; system 'stty -echo'; rescue; end
         system("#{cmd}")
+        begin; system 'stty echo'; rescue; end
+
         Pushwagner.ok
       end
     end
