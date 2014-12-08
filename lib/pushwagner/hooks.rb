@@ -48,7 +48,9 @@ module Pushwagner
     end
 
     def gets_sudo_passwd
-      if @sudo.nil?
+      if ENV['PUSHWAGNER_SUDO']
+        @sudo = ENV['PUSHWAGNER_SUDO']
+      elsif @sudo.nil?
         puts
         Pushwagner.severe  "<<< WARNING: this operation requires privileges >>>"
         Pushwagner.warning "Enter Ctrl+C to abort."
@@ -60,6 +62,7 @@ module Pushwagner
           # windoz
         end
         @sudo = STDIN.gets.chomp
+        puts
         begin
           system 'stty echo'
         rescue
@@ -119,13 +122,10 @@ module Pushwagner
     private
     def local_exec(cmds)
       cmds.each do |cmd|
-        Pushwagner.begin_info "Executing `#{cmd}` locally"
+        Pushwagner.info "Executing `#{cmd}` locally..."
 
-        begin; system 'stty -echo'; rescue; end
         system("#{cmd}")
-        begin; system 'stty echo'; rescue; end
 
-        Pushwagner.ok
       end
     end
 
