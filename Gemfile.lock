@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pushwagner (0.0.1.9)
+    pushwagner (0.0.1.10)
       colorize (~> 0.7)
       net-scp (~> 1.2, >= 1.2.1)
       net-ssh (~> 2.9, >= 2.9.1)
