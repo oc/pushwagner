@@ -34,7 +34,7 @@ module Pushwagner
 
   class Hooks::Remote
     
-    attr_reader :environment, :before, :after
+    attr_reader :environment, :before, :after, :sudo
 
     def initialize(env, remote)
       @environment = env
@@ -84,11 +84,16 @@ module Pushwagner
               ch.request_pty do |pty_ch, success|
                 raise "could not execute #{cmd}" unless success
 
+                puts
+
                 ch.exec("#{cmd}")
 
                 ch.on_data do |data_ch, data|
                   if data =~ /\[sudo\] password/i
-                    ch.send_data("#{gets_sudo_passwd}\n")
+                    gets_sudo_passwd unless sudo
+                    ch.send_data("#{sudo}\n")
+                  else
+                    print data
                   end
                 end
               end
@@ -131,3 +136,4 @@ module Pushwagner
 
   end
 end
+
