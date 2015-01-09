@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'pushwagner'
+require 'pushwagner/version'
 
 def get_version
   Pushwagner.info "You must specify which version you wish to deploy"
@@ -14,15 +15,17 @@ env = ARGV[1] || ENV['PW_ENV'] || 'default'
 
 main = Pushwagner::Main.new(:config_file => 'config/deploy.yml', :version => version, :environment => env)
 
-puts %q{
+puts (
+%q{
                  _
  _ __  _   _ ___| |____      ____ _  __ _ _ __   ___ _ __
 | '_ \| | | / __| '_ \ \ /\ / / _` |/ _` | '_ \ / _ \ '__|
 | |_) | |_| \__ \ | | \ V  V / (_| | (_| | | | |  __/ | _
 | .__/ \__,_|___/_| |_|\_/\_/ \__,_|\__, |_| |_|\___|_|(oc)
-|_|                                 |___/
+|_|                                 |___/ }.colorize(color: :blue, mode: :bold) + 
+ ('(' + Pushwagner::VERSION + ')').colorize(color: :cyan))
+puts
 
-}.colorize(color: :blue, mode: :bold)
 
 # TODO: detect cli from config
 case ARGV[0]
