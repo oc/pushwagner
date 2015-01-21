@@ -16,10 +16,16 @@ module Pushwagner
             Net::SCP.start(host, environment.user) do |scp|
               dest = name.start_with?('/') ? name : "#{environment.path_prefix}/#{name}/"
               Pushwagner.begin_info "Uploading files to #{host}:#{dest}"
-
               files.each do |f|
-                if File.exists?(f)
-                  scp.upload!(f, dest, :recursive => File.directory?(f))
+                # Define globbing for strings containing an asterisk: '*'
+                if f.include?('*')
+                  puts
+                  Dir.glob(f).each do |g|
+                    puts "Uploading #{g} #{'(dir)' if File.directory?(g)} to #{dest}"
+                    scp.upload!(g, dest, recursive: File.directory?(g))
+                  end
+                elsif File.exists?(f)
+                  scp.upload!(f, dest, recursive: File.directory?(f))
                 else
                   puts
                   Pushwagner.warning "Local file #{f} does not exist"
