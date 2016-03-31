@@ -31,7 +31,8 @@ maven:
     releases:  http://repo.example.com/nexus/content/repositories/releases
     snapshots: http://repo.example.com/nexus/content/repositories/snapshots
   artifacts:
-  	# creates /var/apps/foo.jar by default (assumes foo-webapp is a jar for now)
+    # creates /var/apps/foo/foo-webapp.jar by default (assumes foo-webapp is a jar)
+    # I guess I should read the pom packaging some day... Or you can pull req it.
     foo:
       group_id:    com.example
       artifact_id: foo-webapp
