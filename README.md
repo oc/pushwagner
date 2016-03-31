@@ -67,7 +67,7 @@ hooks:
 		before:
 			- mvn package
 		after:
-			- mvn test -Pintegrationtests
+			- mvn test -Pint
 	remote:
 		before:
 			- /usr/sbin/service foo stop
