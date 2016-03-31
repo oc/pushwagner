@@ -8,6 +8,13 @@ Pushwagner searches for a config in: `./deploy.yml`, `./.pw.yml`, and `./config/
 
 Pushwagner is currently extremely opinionated to my usual practises.
 
+Some conventions:
+- Prefer ssh key-based deployment (Use reallly strong SSH-keys with your own ssh-agent or not at your own peril)
+- Place most shit in /var/www|lib|keke/<app>, logs in /var/log, cfg in /etc/<app>. 
+- Let your app orchestration service or dscm set up access to deployers (I use salt|ansible|puppet for both app orchestration and dscm/infrastructure cfg) f.x.: NOPASSWD `sudo service svcname <start|restart|stop>`
+- I usually separate application infrastructrure config (in infrastructure/app orchestration) and app config (toggles, etc)
+- I usually thus create service wrappers / systemd / upstart shit with said dscm
+
 ### Minimal configuration
 
 ````yaml
@@ -19,6 +26,25 @@ environments:
   default:
     hosts: [test.example.com]
 ````
+
+### Environments
+
+````yaml
+path_prefix: /var/apps
+
+# Must specify a default environment.
+environments:
+  test: &test
+    hosts: [test.example.com]
+    user: testuser
+  production: &production
+    hosts: [a1.example.com, a2.example.com]
+    user: productionuser
+  default: 
+    <<: *production
+
+````
+
 
 ### Maven (M2) repo integration
 
