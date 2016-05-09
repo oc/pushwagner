@@ -118,6 +118,8 @@ environments:
 
 ## Build & deploy:
 
+```
 bump lib/pushwagner/version.rb
 gem build pushwagner.gemspec
 gem push pushwagner-x.x.x.x.gem
+```
