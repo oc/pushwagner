@@ -8,7 +8,7 @@ describe Pushwagner::Hooks do
 
   describe "#initialize" do
     it "raises error if invalid environment" do
-      expect { Pushwagner::Hooks.new(nil) }.to raise_exception
+      expect { Pushwagner::Hooks.new(nil) }.to raise_exception(StandardError, /Invalid environment/)
     end
 
     it "returns an empty config with an empty environment" do
@@ -30,14 +30,16 @@ describe Pushwagner::Hooks do
   describe "#run" do
     it "requires an argument" do
       sut = Pushwagner::Hooks.new(env)
-      expect { sut.run() }.to raise_exception
+      expect { sut.run() }.to raise_exception(ArgumentError, /wrong number of arguments/) 
     end
 
     it "accepts run :after target" do
       sut = Pushwagner::Hooks.new(env)
 
-      sut.stub_chain("local.run").with(:after).once
-      sut.stub_chain("remote.run").with(:after).once
+      #sut.stub_chain("local.run").with(:after).once
+      #sut.stub_chain("remote.run").with(:after).once
+      expect(sut.local).to receive(:run).with(:after).once
+      expect(sut.remote).to receive(:run).with(:after).once
 
       sut.run(:after)
     end
@@ -45,8 +47,10 @@ describe Pushwagner::Hooks do
     it "accepts run :before target" do
       sut = Pushwagner::Hooks.new(env)
 
-      sut.stub_chain("local.run").with(:before).once
-      sut.stub_chain("remote.run").with(:before).once
+      #sut.stub_chain("local.run").with(:before).once
+      expect(sut.local).to receive(:run).with(:before).once
+      expect(sut.remote).to receive(:run).with(:before).once
+      #sut.stub_chain("remote.run").with(:before).once
 
       sut.run(:before)
     end
@@ -69,27 +73,19 @@ describe Pushwagner::Hooks::Local do
     it "requires an argument" do
       sut = Pushwagner::Hooks::Local.new(env, env.hooks['local'])
 
-      expect { sut.run() }.to raise_exception
+      expect { sut.run() }.to raise_exception(ArgumentError, /wrong number of arguments/)
     end
     it "supports :before hooks" do
       sut = Pushwagner::Hooks::Local.new(env, env.hooks['local'])
 
-      Pushwagner.stub(:info)
-      Pushwagner.stub(:begin_info)
-      Pushwagner.stub(:ok)
-
-      sut.should_receive(:system).with('echo "one"').once
+      expect(sut).to receive(:system).with('echo "one"').once
       sut.run(:before)
     end
     it "supports :after hooks" do
       sut = Pushwagner::Hooks::Local.new(env, env.hooks['local'])
 
-      Pushwagner.stub(:info)
-      Pushwagner.stub(:begin_info)
-      Pushwagner.stub(:ok)
-
-      sut.should_receive(:system).with('echo "two"').once
-      sut.should_receive(:system).with('echo "three"').once
+      expect(sut).to receive(:system).with('echo "two"').once
+      expect(sut).to receive(:system).with('echo "three"').once
       sut.run(:after)
     end
   end
@@ -111,21 +107,19 @@ describe Pushwagner::Hooks::Remote do
     it "requires an argument" do
       sut = Pushwagner::Hooks::Remote.new(env, env.hooks['remote'])
 
-      expect { sut.run() }.to raise_exception
+      expect { sut.run() }.to raise_exception(ArgumentError, /wrong number of arguments/)
     end
 
     it "supports :before hooks" do
       sut = Pushwagner::Hooks::Remote.new(env, env.hooks['remote'])
 
-      Pushwagner.stub(:info)
-      Pushwagner.stub(:begin_info)
-      Pushwagner.stub(:ok)
-
       # Mock Net::SSH inner interaction smoke test
-      ssh = mock
-      ssh.should_receive(:open_channel).exactly(4).times
-      ssh.should_receive(:loop).exactly(4).times
-      Net::SSH.should_receive(:start).and_yield(ssh).exactly(4).times
+      ssh = double()
+      
+      expect(ssh).to receive(:open_channel).exactly(4).times
+      expect(ssh).to receive(:loop).exactly(4).times
+      
+      expect(Net::SSH).to receive(:start).and_yield(ssh).exactly(4).times
 
       sut.run(:before)
     end
@@ -134,9 +128,9 @@ describe Pushwagner::Hooks::Remote do
       sut = Pushwagner::Hooks::Remote.new(env, env.hooks['remote'])
 
       # Mock Net::SSH inner interaction smoke
-      ssh = mock
-      ssh.should_receive(:open_channel).never
-      Net::SSH.should_receive(:start).and_yield(ssh).never
+      ssh = double()
+      expect(ssh).to receive(:open_channel).never
+      expect(Net::SSH).to receive(:start).and_yield(ssh).never
 
       sut.run(:after)
     end

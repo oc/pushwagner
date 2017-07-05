@@ -43,15 +43,15 @@ describe Pushwagner::Maven do
     describe "repositories" do
       it "requires repositories configuration element" do
         cfg.delete('repositories')
-        expect {Pushwagner::Maven.new(cfg, "1")}.to raise_error(StandardError)
+        expect {Pushwagner::Maven.new(cfg, "1")}.to raise_error(StandardError, /repositories configuration required/)
       end
       it "requires 'snapshots' repository" do
         cfg['repositories'].delete('snapshots')
-        expect {Pushwagner::Maven.new(cfg, "1")}.to raise_error(StandardError)
+        expect {Pushwagner::Maven.new(cfg, "1")}.to raise_error(StandardError, /snapshots repository required/)
       end
       it "requires 'releases' repository" do
         cfg['repositories'].delete('releases')
-        expect {Pushwagner::Maven.new(cfg, "1")}.to raise_error(StandardError)
+        expect {Pushwagner::Maven.new(cfg, "1")}.to raise_error(StandardError, /releases repository required/)
       end
       it "parses repositories" do
         m = Pushwagner::Maven.new(cfg, "1")
@@ -66,7 +66,7 @@ describe Pushwagner::Maven do
 
     it "reads releases authentication from maven settings.xml" do
       m = Pushwagner::Maven.new(cfg, "1")
-      m.repository.should_receive(:open).
+      expect(m.repository).to receive(:open).
           with(/.*settings.xml$/).
           and_return(settings)
 
@@ -75,7 +75,7 @@ describe Pushwagner::Maven do
 
     it "reads snapshots authentication from maven settings.xml" do
       m = Pushwagner::Maven.new(cfg, "1")
-      m.repository.should_receive(:open).
+      expect(m.repository).to receive(:open).
           with(/.*settings.xml$/).
           and_return(settings)
 
@@ -88,8 +88,8 @@ describe Pushwagner::Maven do
     it "builds maven2-repo-style urls and retrieves metadata" do
       m = Pushwagner::Maven.new(cfg, "1")
 
-      m.repository.should_receive(:authentication).and_return("")
-      m.repository.should_receive(:open).and_return(metadata)
+      expect(m.repository).to receive(:authentication).and_return("")
+      expect(m.repository).to receive(:open).and_return(metadata)
 
       snapshot = Pushwagner::Maven::Artifact.new("foo", "bar", "1.0-SNAPSHOT")
       expect(m.repository.absolute_url(snapshot)).to eq("http://w00t.uppercase.no/nexus/content/repositories/snapshots/bar/foo/1.0-SNAPSHOT/foo-1.0-20121114.152717-3.jar")

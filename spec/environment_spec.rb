@@ -4,7 +4,7 @@ require 'pushwagner/environment'
 describe Pushwagner::Environment do
   describe "#initialize" do
     it "requires config_file" do
-      expect { Pushwagner::Environment.new('config_file' => File.join(config_root, 'nonexisting.yml'))}.to raise_error
+      expect { Pushwagner::Environment.new('config_file' => File.join(config_root, 'nonexisting.yml'))}.to raise_error(RuntimeError, /Couldn't find config file in locations: (.*)/)
     end
 
     it "supports config_file" do
@@ -30,14 +30,14 @@ describe Pushwagner::Environment do
 
     it "returns empty hash when not configured" do
       env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'static.yml'), :version => "1foo" )
-      expect(env.maven?).to be_false
+      expect(env.maven?).to be false
       expect(env.maven).to eq({})
     end
   end
   describe "static files" do
     it "returns empty hash when not configured" do
       env = Pushwagner::Environment.new(:config_file => File.join(config_root, 'maven.yml'), :version => "1foo" )
-      expect(env.static?).to be_false
+      expect(env.static?).to be false
       expect(env.static).to eq({})
     end
     it "parses to a hash of files" do
