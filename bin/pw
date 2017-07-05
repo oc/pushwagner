@@ -2,18 +2,31 @@
 
 require 'pushwagner'
 require 'pushwagner/version'
+require 'optparse'
+require 'ostruct'
 
 def get_version
   Pushwagner.info "You must specify which version you wish to deploy"
   STDIN.gets.strip
 end
 
-# TODO: detect version requirement from config
-version = 1 # ENV["VERSION"] || get_version
+options = OpenStruct.new
+options.environment = 'default'
+options.version = 1
+options.config_file = '.pw.yml'
+options.command = 'todo'
 
-env = ARGV[1] || ENV['PW_ENV'] || 'default'
+OptionParser.new do |opts|
+  opts.banner = 'Usage: pw <deploy> [options]'
+  opts.on('deploy') { |v| options.command = 'deploy'}
+  opts.on('-c FILE', 'Use config file') { |v| options.config_file = v }
+  opts.on('-e ENV', 'Set environment') { |v| options.environment = v }
+  opts.on('-V VERSION', Float, 'Set version') { |v| options.version = v }
+  opts.on('-v', '--version', 'Show version') { |v| puts Pushwagner::VERSION; exit }
+  opts.on('-h', '--help', 'Show help') { |v| puts puts opts; exit }
+end.parse!
 
-main = Pushwagner::Main.new(:config_file => 'config/deploy.yml', :version => version, :environment => env)
+main = Pushwagner::Main.new(options.to_h)
 
 puts (
 %q{
@@ -27,10 +40,9 @@ puts (
 puts
 
 
-# TODO: detect cli from config
-case ARGV[0]
+case options.command
   when "deploy"
     main.deploy
   else
-    Pushwagner.warning "Usage: pw <deploy|todo> [environment]"
+    Pushwagner.warning "Usage: pw <command> [options]"
 end

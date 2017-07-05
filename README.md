@@ -89,16 +89,16 @@ Sudo support, automatically prompts for passwd, or use: `env PUSHWAGNER_SUDO=sud
 
 ````yaml
 hooks:
-	local:
-		before:
-			- mvn package
-		after:
-			- mvn test -Pint
-	remote:
-		before:
-			- /usr/sbin/service foo stop
-		after:
-			- /usr/sbin/service foo start
+    local:
+      before:
+        - mvn package
+      after:
+        - mvn test -Pint
+    remote:
+      before:
+        - /usr/sbin/service foo stop
+      after:
+        - /usr/sbin/service foo start
 ````
 
 ### Environments
