@@ -6,7 +6,7 @@ module Pushwagner
         @environment = Pushwagner::Environment.new(opts)
       rescue => e
         Pushwagner.severe e.message
-        exit
+        raise e
       end
     end
 
