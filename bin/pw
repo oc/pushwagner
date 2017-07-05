@@ -12,7 +12,7 @@ end
 
 options = OpenStruct.new
 options.environment = 'default'
-options.version = 1
+options.version = '1'
 options.config_file = '.pw.yml'
 options.command = 'todo'
 
@@ -21,7 +21,7 @@ OptionParser.new do |opts|
   opts.on('deploy') { |v| options.command = 'deploy'}
   opts.on('-c FILE', 'Use config file') { |v| options.config_file = v }
   opts.on('-e ENV', 'Set environment') { |v| options.environment = v }
-  opts.on('-V VERSION', Float, 'Set version') { |v| options.version = v }
+  opts.on('-V VERSION', 'Set version') { |v| options.version = v }
   opts.on('-v', '--version', 'Show version') { |v| puts Pushwagner::VERSION; exit }
   opts.on('-h', '--help', 'Show help') { |v| puts puts opts; exit }
 end.parse!
