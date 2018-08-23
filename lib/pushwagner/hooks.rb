@@ -82,16 +82,20 @@ module Pushwagner
             ssh.open_channel do |ch|
 
               ch.request_pty do |pty_ch, success|
-                raise "could not execute #{cmd}" unless success
+                raise "FATAL: could not execute #{cmd}" unless success
 
                 puts
 
-                ch.exec("#{cmd}")
+                ch.exec("#{cmd}") do |ch, success_exec|
+                  raise "FATAL: failed on execution of #{cmd}" unless success_exec  
+                end
 
-                ch.on_data do |data_ch, data|
+                ch.on_extended_data do |data_ch, type, data|
                   if data =~ /\[sudo\] password/i
                     gets_sudo_passwd unless sudo
                     ch.send_data("#{sudo}\n")
+                  elsif type == :stderr
+                    print "ERROR: #{data}"
                   else
                     print data
                   end
