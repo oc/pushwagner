@@ -1,11 +1,11 @@
 PATH
   remote: .
   specs:
-    pushwagner (0.0.2.4)
+    pushwagner (0.0.2.6)
       colorize (~> 0.7)
       net-scp (~> 1.2, >= 1.2.1)
       net-ssh (~> 4.2, >= 4.2)
-      nokogiri (~> 1.6, >= 1.6.7)
+      nokogiri (~> 1.8, >= 1.8.2)
 
 GEM
   remote: https://rubygems.org/
@@ -18,7 +18,7 @@ GEM
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (4.2.0)
-    nokogiri (1.8.2)
+    nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
     pry (0.10.3)
       coderay (~> 1.1.0)

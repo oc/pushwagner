@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'net-ssh', '~> 4.2', '>= 4.2'
   s.add_runtime_dependency 'net-scp', '~> 1.2', '>= 1.2.1'
-  s.add_runtime_dependency 'nokogiri', '~> 1.6', '>= 1.6.7'
+  s.add_runtime_dependency 'nokogiri', '~> 1.8', '>= 1.8.2'
   s.add_runtime_dependency 'colorize', '~> 0.7'
 
   s.add_development_dependency 'bundler', '~> 1.7'
